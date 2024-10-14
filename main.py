@@ -4,6 +4,7 @@ from firebase_admin import credentials, firestore
 from handlers.user_handler import *
 from models.user import User
 from middleware.auth import verify_token
+from fastapi.middleware.cors import CORSMiddleware
 
 # initialize firestore
 cred = credentials.Certificate("events-5c576-firebase-adminsdk-sixqt-7813fc726e.json")
@@ -11,6 +12,14 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # create user route
 @app.post("/user/")
