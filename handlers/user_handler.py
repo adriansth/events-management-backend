@@ -1,11 +1,8 @@
 from models.user import User
-from firebase_admin import firestore
 from fastapi import HTTPException
 
-db = firestore.client()
-
 # create user
-def create_user(user: User):
+def create_user(db, user: User):
    user_ref = db.collection("users").document(user.uid)
    if user_ref.get().exists:
       raise HTTPException(status_code=400, detail="User with this uid already exists")
@@ -13,7 +10,7 @@ def create_user(user: User):
    return { "message": "User created successfully" }
 
 # get user by uid
-def get_user_by_uid(uid: str):
+def get_user_by_uid(db, uid: str):
    users_ref = db.collection("users")
    query = users_ref.where("uid", "==", uid).limit(1)
    results = query.stream()
@@ -26,7 +23,7 @@ def get_user_by_uid(uid: str):
    return user_data
 
 # update user by uid
-def update_user_by_uid(uid: str, user_update: dict):
+def update_user_by_uid(db, uid: str, user_update: dict):
    users_ref = db.collection("users")
    query = users_ref.where("uid", "==", uid).limit(1)
    results = query.stream()
@@ -40,7 +37,7 @@ def update_user_by_uid(uid: str, user_update: dict):
    return { "message": "User updated successfully" }
 
 # delete user by uid
-def delete_user_by_uid(uid: str):
+def delete_user_by_uid(db, uid: str):
    users_ref = db.collection("users")
    query = users_ref.where("uid", "==", uid).limit(1)
    results = query.stream()
