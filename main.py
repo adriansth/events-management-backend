@@ -15,29 +15,26 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# create user route
 @app.post("/user/")
-def create_user(user: User = Depends(verify_token)):
-   return create_user(db, user)
+def create_user_route(user: User):
+    return create_user(db, user)
 
-# get user by uid route
 @app.get("/user/{uid}")
-def get_user_by_uid(uid: str = Depends(verify_token)):
-   return get_user_by_uid(db, uid)
+def get_user_by_uid_route(uid: str):
+    return get_user_by_uid(db, uid)
 
-# update user by uid route
 @app.put("/users/{uid}")
-def update_user_by_uid(uid: str, user_update: dict = Depends(verify_token)):
-   return update_user_by_uid(db, uid, user_update)
+def update_user_by_uid_route(uid: str, user_update: dict):
+    return update_user_by_uid(db, uid, user_update)
 
-# delete user by uid
 @app.delete("/users/{uid}")
-def delete_user_by_uid(uid: str = Depends(verify_token)):
-   return delete_user_by_uid(db, uid)
+def delete_user_by_uid_route(uid: str):
+    return delete_user_by_uid(db, uid)
+
 
