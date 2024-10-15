@@ -22,6 +22,19 @@ def get_user_by_uid(db, uid: str):
       raise HTTPException(status_code=404, detail="User not found")
    return user_data
 
+# get user by email
+def get_user_by_email(db, email: str):
+   users_ref = db.collection("users")
+   query = users_ref.where("email", "==", email).limit(1)
+   results = query.stream()
+   user_data = None
+   for user in results:
+      user_data = user.to_dict()
+      break
+   if not user_data: 
+      raise HTTPException(status_code=404, detail="User not found")
+   return user_data
+
 # update user by uid
 def update_user_by_uid(db, uid: str, user_update: dict):
    users_ref = db.collection("users")

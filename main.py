@@ -33,6 +33,11 @@ def create_user_route(user: User):
 def get_user_by_uid_route(uid: str):
     return get_user_by_uid(db, uid)
 
+# get user by email
+@app.get("/user/email/{email}/")
+def get_user_by_email_route(email: str):
+    return get_user_by_email(db, email)
+
 # update user by uid
 @app.put("/user/{uid}")
 def update_user_by_uid_route(uid: str, user_update: dict):
@@ -64,7 +69,7 @@ def update_event_by_id_route(event_id: str, event_update: dict):
     return update_event_by_id(db, event_id, event_update)
 
 # delete event by id
-@app.delete("/event/{id}")
+@app.delete("/event/{event_id}")
 def delete_event_by_id_route(event_id: str):
     return delete_event_by_id(db, event_id)
 
@@ -87,3 +92,8 @@ def cancel_joiner_route(event_id: str, user_id: str):
 @app.get("/event/invited/{user_id}/")
 def get_invited_events_route(user_id: str):
     return get_events_by_joiner(db, user_id)
+
+# get joiner by user id
+@app.get("/event/{event_id}/joiner/{user_id}")
+def get_joiner_route(event_id: str, user_id: str):
+    return get_joiner_by_user_id(db, event_id, user_id)
