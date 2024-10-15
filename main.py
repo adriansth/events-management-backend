@@ -74,11 +74,11 @@ def add_joiner_route(event_id: str, user_id: str):
     return add_joiner_to_event(db, event_id, user_id)
 
 # update joiner to accepted
-@app.post("/event/{event_id}/joiner/{user_id}/accept/")
+@app.put("/event/{event_id}/joiner/{user_id}/accept/")
 def accept_joiner_route(event_id: str, user_id: str):
     return update_joiner_to_accepted(db, event_id, user_id)
 
 # update joiner to cancelled
-@app.post("/event/{event_id}/joiner/{user_id}/cancel/")
+@app.put("/event/{event_id}/joiner/{user_id}/cancel/")
 def cancel_joiner_route(event_id: str, user_id: str):
     return update_joiner_to_cancelled(db, event_id, user_id)
