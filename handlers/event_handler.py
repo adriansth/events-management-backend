@@ -95,3 +95,18 @@ def update_joiner_to_cancelled(db, event_id: str, user_id: str):
       raise HTTPException(status_code=404, detail="Joiner not found in the event")
    event_ref.update({ "joiners": event_data["joiners"] })
    return { "message": "Joiner status updated to cancelled" }
+
+# get events where the user is a joiner
+def get_events_by_joiner(db, user_id: str):
+   events_ref = db.collection("events")
+   results = events_ref.stream()
+   invited_events = []
+   for event in results:
+      event_data = event.to_dict()
+      for joiner in event_data["joiners"]:
+         if joiner["user_id"] == user_id:
+            invited_events.append(event_data)
+            break
+   if not invited_events:
+      raise HTTPException(status_code=404, detail="No events found for this user")
+   return invited_events

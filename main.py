@@ -82,3 +82,8 @@ def accept_joiner_route(event_id: str, user_id: str):
 @app.put("/event/{event_id}/joiner/{user_id}/cancel/")
 def cancel_joiner_route(event_id: str, user_id: str):
     return update_joiner_to_cancelled(db, event_id, user_id)
+
+# get events by joiner
+@app.get("/event/invited/{user_id}/")
+def get_invited_events_route(user_id: str):
+    return get_events_by_joiner(db, user_id)
