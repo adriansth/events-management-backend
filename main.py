@@ -45,25 +45,40 @@ def delete_user_by_uid_route(uid: str):
 
 # create event
 @app.post("/event/")
-def create_event(event: Event):
+def create_event_route(event: Event):
    return create_event(db, event)
 
 # get events by organizer
-@app.get("/event/{organizer}")
-def get_events_by_organizer(organizer: str):
+@app.get("/event/owned/{organizer}/")
+def get_events_by_organizer_route(organizer: str):
     return get_events_by_organizer(db, organizer)
 
 # get event by id
 @app.get("/event/{event_id}")
-def get_event_by_id(event_id: str):
+def get_event_by_id_route(event_id: str):
     return get_event_by_id(db, event_id)
 
 # update event by id
 @app.put("/event/{event_id}")
-def update_event_by_id(event_id: str, event_update: dict):
+def update_event_by_id_route(event_id: str, event_update: dict):
     return update_event_by_id(db, event_id, event_update)
 
 # delete event by id
 @app.delete("/event/{id}")
-def delete_event_by_id(event_id: str):
+def delete_event_by_id_route(event_id: str):
     return delete_event_by_id(db, event_id)
+
+# add joiner route
+@app.post("/event/{event_id}/join/")
+def add_joiner_route(event_id: str, user_id: str):
+    return add_joiner_to_event(db, event_id, user_id)
+
+# update joiner to accepted
+@app.post("/event/{event_id}/joiner/{user_id}/accept/")
+def accept_joiner_route(event_id: str, user_id: str):
+    return update_joiner_to_accepted(db, event_id, user_id)
+
+# update joiner to cancelled
+@app.post("/event/{event_id}/joiner/{user_id}/cancel/")
+def cancel_joiner_route(event_id: str, user_id: str):
+    return update_joiner_to_cancelled(db, event_id, user_id)

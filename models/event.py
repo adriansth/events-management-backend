@@ -1,19 +1,26 @@
-# event data model
-class Event:
-   def __init__(self, title, organizer, date_time, duration, location):
-      self.title = title
-      self.organizer = organizer
-      self.date_time = date_time
-      self.duration = duration
-      self.location = location
-      self.joiners = []
+from pydantic import BaseModel
+from typing import List
 
-   def to_dict(self):
-      return {
-         "title": self.title,
-         "organizer": self.organizer,
-         "date_time": self.date_time,
-         "duration": self.duration,
-         "location": self.location, 
-         "joiners": self.joiners,        
-      }
+# joiner data model
+class Joiner(BaseModel):
+     user_id: str
+     status: str # confirmed, pending, cancelled
+
+# event data model
+class Event(BaseModel):
+      title: str
+      organizer: str
+      date_time: str
+      duration: str
+      location: str
+      joiners: List[str] = []
+
+      def to_dict(self):
+         return {
+            "title": self.title,
+            "organizer": self.organizer,
+            "date_time": self.date_time,
+            "duration": self.duration,
+            "location": self.location, 
+            "joiners": [joiner.dict() for joiner in self.joiners]
+         }
