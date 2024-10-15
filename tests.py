@@ -1,6 +1,4 @@
-import pytest
 from unittest.mock import Mock
-from fastapi import HTTPException
 from handlers.event_handler import (
     create_event, get_events_by_organizer, delete_event_by_id,
     add_joiner_to_event, update_joiner_to_accepted, update_joiner_to_cancelled,
@@ -45,8 +43,6 @@ def test_get_events_by_organizer(mocker):
 def test_delete_event_by_id(mocker):
     db = Mock()
     event_id = "event123"
-
-    # Mock Firestore document
     event_ref = Mock()
     event_ref.get.return_value.exists = True
     db.collection().document.return_value = event_ref
@@ -54,3 +50,62 @@ def test_delete_event_by_id(mocker):
     result = delete_event_by_id(db, event_id)
     event_ref.delete.assert_called_once()
     assert result == {"message": "Event deleted successfully"}
+
+def test_add_joiner_to_event(mocker):
+    db = Mock()
+    event_id = "event123"
+    user_id = "user456"
+    event_ref = Mock()
+    event_ref.get.return_value.exists = True
+    event_data = {"joiners": []}
+    event_ref.get.return_value.to_dict.return_value = event_data
+    db.collection().document.return_value = event_ref
+    result = add_joiner_to_event(db, event_id, user_id)
+    event_ref.update.assert_called_once_with({
+        "joiners": [{"user_id": user_id, "status": "pending"}]
+    })
+    assert result == {"message": "Joiner added successfully"}
+
+def test_update_joiner_to_accepted(mocker):
+    db = Mock()
+    event_id = "event123"
+    user_id = "user456"
+    event_ref = Mock()
+    event_ref.get.return_value.exists = True
+    event_data = {"joiners": [{"user_id": user_id, "status": "pending"}]}
+    event_ref.get.return_value.to_dict.return_value = event_data
+    db.collection().document.return_value = event_ref
+    result = update_joiner_to_accepted(db, event_id, user_id)
+    event_ref.update.assert_called_once_with({
+        "joiners": [{"user_id": user_id, "status": "accepted"}]
+    })
+    assert result == {"message": "Joiner status updated to accepted"}
+
+def test_update_joiner_to_cancelled(mocker):
+    db = Mock()
+    event_id = "event123"
+    user_id = "user456"
+    event_ref = Mock()
+    event_ref.get.return_value.exists = True
+    event_data = {"joiners": [{"user_id": user_id, "status": "pending"}]}
+    event_ref.get.return_value.to_dict.return_value = event_data
+    db.collection().document.return_value = event_ref
+    result = update_joiner_to_cancelled(db, event_id, user_id)
+    event_ref.update.assert_called_once_with({
+        "joiners": [{"user_id": user_id, "status": "cancelled"}]
+    })
+    assert result == {"message": "Joiner status updated to cancelled"}
+
+def test_get_joiner_by_user_id(mocker):
+    db = Mock()
+    event_id = "event123"
+    user_id = "user456"
+    event_ref = Mock()
+    event_ref.get.return_value.exists = True
+    event_data = {
+        "joiners": [{"user_id": user_id, "status": "pending"}]
+    }
+    event_ref.get.return_value.to_dict.return_value = event_data
+    db.collection().document.return_value = event_ref
+    result = get_joiner_by_user_id(db, event_id, user_id)
+    assert result == {"user_id": user_id, "status": "pending"}
